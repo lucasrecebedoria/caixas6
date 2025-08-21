@@ -1,0 +1,48 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ==========================
+    // Usuários cadastrados
+    // ==========================
+    match /usuarios/{uid} {
+      // Só logados podem criar usuário
+      allow create: if request.auth != null;
+
+      // Cada usuário só pode ver/editar seu próprio perfil
+      allow read, update, delete: if request.auth != null && request.auth.uid == uid;
+    }
+
+    // ==========================
+    // Caixa (abertura/fechamento)
+    // ==========================
+    match /caixa/{caixaId} {
+      // Criar caixa -> qualquer logado
+      allow create: if request.auth != null;
+
+      // Ler caixas
+      allow read: if request.auth != null;
+
+      // Atualizar ou excluir -> só admins (matrículas fixas)
+      allow update, delete: if request.auth != null 
+        && (request.auth.token.email.split("@")[0] in ["4144", "70029", "6266"]);
+    }
+
+    // ==========================
+    // Relatórios de abastecimento
+    // ==========================
+    match /relatorios/{relatorioId} {
+      // Criar relatório -> qualquer logado
+      allow create: if request.auth != null;
+
+      // Admins podem ler todos
+      allow read: if request.auth != null &&
+                  (request.auth.token.email.split("@")[0] in ["4144", "70029", "6266"]);
+
+      // Usuário só pode ver os relatórios que ele mesmo criou
+      allow read: if request.auth != null &&
+                  request.auth.token.email.split("@")[0] == resource.data.matriculaRecebedor;
+    }
+  }
+}
