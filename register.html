@@ -1,0 +1,56 @@
+
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Cadastro • Move Buss</title>
+  <link rel="stylesheet" href="./styles.css"/>
+  <link rel="icon" href="./assets/logo.png"/>
+  <style>
+    .centerbox{max-width:520px; margin:6vh auto; padding:1rem}
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="logo"><img src="./assets/logo.png" alt="Move Buss"/></div>
+    <div class="spacer"></div>
+    <a class="btn secondary" href="./login.html">Ir para login</a>
+  </header>
+
+  <main class="centerbox card">
+    <h2>Criar conta</h2>
+    <div class="grid-2">
+      <div class="field"><label>Matrícula</label><input id="matricula" type="text" placeholder="Ex: 6266"/></div>
+      <div class="field"><label>Nome completo</label><input id="nome" type="text" placeholder="Seu nome"/></div>
+      <div class="field"><label>Senha</label><input id="senha" type="password"/></div>
+      <div class="field"><label>Confirmar senha</label><input id="senha2" type="password"/></div>
+    </div>
+    <p class="notice">O e-mail será gerado automaticamente no formato <code>MATRICULA@movebuss.local</code>.</p>
+    <button id="btn-cadastrar" class="btn" style="margin-top:.5rem">Cadastrar</button>
+  </main>
+
+  <script type="module">
+    import { registerUser } from './auth.js';
+    import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
+
+    onAuthStateChanged(getAuth(), (user)=>{
+      if(user) window.location.href = './index.html';
+    });
+
+    document.getElementById('btn-cadastrar').addEventListener('click', async ()=>{
+      const matricula = document.getElementById('matricula').value.trim();
+      const nome = document.getElementById('nome').value.trim();
+      const senha = document.getElementById('senha').value;
+      const senha2 = document.getElementById('senha2').value;
+      if(!matricula || !nome || !senha){ alert('Preencha todos os campos'); return; }
+      if(senha !== senha2){ alert('As senhas não conferem'); return; }
+      try{
+        await registerUser({ matricula, nome, senha });
+        alert('Cadastro concluído! Faça login.');
+        window.location.href = './login.html';
+      }catch(e){ alert('Erro no cadastro: '+e.message); }
+    });
+  </script>
+</body>
+</html>

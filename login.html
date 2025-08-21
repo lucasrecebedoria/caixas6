@@ -1,0 +1,48 @@
+
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Login • Move Buss</title>
+  <link rel="stylesheet" href="./styles.css"/>
+  <link rel="icon" href="./assets/logo.png"/>
+  <style>
+    .centerbox{max-width:420px; margin:7vh auto; padding:1rem}
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="logo"><img src="./assets/logo.png" alt="Move Buss"/></div>
+    <div class="spacer"></div>
+    <a class="btn secondary" href="./register.html">Criar conta</a>
+  </header>
+
+  <main class="centerbox card">
+    <h2>Entrar</h2>
+    <p class="notice">Use sua <strong>matrícula</strong> e senha.</p>
+    <div class="field"><label>Matrícula</label><input id="matricula" type="text" placeholder="Ex: 70029"/></div>
+    <div class="field"><label>Senha</label><input id="senha" type="password"/></div>
+    <button id="btn-login" class="btn" style="margin-top:.5rem">Entrar</button>
+  </main>
+
+  <script type="module">
+    import { loginWithMatricula } from './auth.js';
+    import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
+
+    onAuthStateChanged(getAuth(), (user)=>{
+      if(user) window.location.href = './index.html';
+    });
+
+    document.getElementById('btn-login').addEventListener('click', async ()=>{
+      const matricula = document.getElementById('matricula').value.trim();
+      const senha = document.getElementById('senha').value;
+      if(!matricula || !senha){ alert('Informe matrícula e senha'); return; }
+      try{
+        await loginWithMatricula({ matricula, senha });
+        window.location.href = './index.html';
+      }catch(e){ alert('Erro ao entrar: '+e.message); }
+    });
+  </script>
+</body>
+</html>

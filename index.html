@@ -1,0 +1,120 @@
+
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Move Buss • Mobilidade Urbana</title>
+  <link rel="stylesheet" href="./styles.css"/>
+  <link rel="icon" href="./assets/logo.png"/>
+</head>
+<body>
+  <header class="topbar no-print">
+    <div class="hamburger" aria-label="menu"><span></span></div>
+    <div class="logo"><img src="./assets/logo.png" alt="Move Buss"/></div>
+    <div id="who" class="notice"></div>
+    <div class="spacer"></div>
+    <span id="user-badge" class="badge hidden"></span>
+    <div class="actions auth-only hidden">
+      <button id="btn-changePass" class="btn secondary">Alterar senha</button>
+      <button id="btn-logout" class="btn">Sair</button>
+    </div>
+  </header>
+
+  <div class="container">
+    <nav class="sidebar no-print">
+      <div class="nav-title">MENU</div>
+      <div class="navlink" id="link-abastecimento">Abastecimento</div>
+      <div class="navlink" id="link-relatorios">Relatórios</div>
+    </nav>
+
+    <main>
+      <!-- Abastecimento -->
+      <section id="section-abastecimento" class="card">
+        <h2>Abertura de caixa & Abastecimento</h2>
+        <div class="grid-2">
+          <div class="card">
+            <div class="field"><label>Status do caixa</label><input id="caixa-status" value="..." readonly/></div>
+            <div style="display:flex; gap:.5rem; margin-top:.5rem">
+              <button id="btn-open" class="btn">Abrir caixa</button>
+              <button id="btn-close" class="btn secondary">Fechar caixa</button>
+            </div>
+            <p class="notice">Só é possível abastecer após <strong>abrir o caixa</strong>.</p>
+          </div>
+          <div class="card" id="sangria-wrap">
+            <h3>Sangria</h3>
+            <div class="grid-2">
+              <div class="field"><label>Valor a ser sangrado (R$)</label><input type="number" step="0.01" id="sangria-valor"/></div>
+              <div class="field"><label>Motivo sangria</label><input type="text" id="sangria-motivo"/></div>
+            </div>
+            <button class="btn" id="btn-solicitar-sangria">Solicitar sangria (precisa autorização do admin)</button>
+          </div>
+        </div>
+
+        <div id="abastecimento-form-wrap" class="card">
+          <h3>Abastecimento</h3>
+          <div class="grid-2">
+            <div class="field">
+              <label>Tipo de validador</label>
+              <select id="validador">
+                <option>PRODATA</option>
+                <option>DIGICON</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Quantidade de bordos</label>
+              <input id="qtd-bordos" type="number" min="0" step="1" placeholder="0"/>
+            </div>
+
+            <div class="field">
+              <label>Valor (R$) — automático</label>
+              <input id="valor" type="text" readonly placeholder="0,00"/>
+            </div>
+
+            <div class="field">
+              <label>Prefixo (55 + 3 dígitos)</label>
+              <div style="display:flex; gap:.5rem; align-items:center">
+                <input value="55" id="prefixo" readonly style="max-width:80px"/>
+                <input id="prefixo-suf" maxlength="3" placeholder="___" />
+              </div>
+            </div>
+
+            <div class="field">
+              <label>Data</label>
+              <input id="data-caixa" type="date"/>
+            </div>
+
+            <div class="field">
+              <label>Matrícula motorista</label>
+              <input id="m-motorista" type="text" placeholder="Ex: 1234"/>
+            </div>
+
+            <div class="field">
+              <label>Matrícula recebedor (logado)</label>
+              <input id="m-recebedor" type="text" readonly/>
+            </div>
+          </div>
+
+          <div style="margin-top:1rem">
+            <button class="btn" id="btn-salvar-abast">Salvar & Imprimir recibo</button>
+          </div>
+        </div>
+
+        <div id="receipt-area" class="hidden"></div>
+      </section>
+
+      <!-- Relatórios -->
+      <section id="section-relatorios" class="card hidden">
+        <h2>Relatórios de caixas</h2>
+        <div style="display:flex; gap:.5rem; align-items:end">
+          <div class="field"><label>Filtrar por data</label><input id="filtro-data" type="date"/></div>
+          <button id="btn-filtrar" class="btn">Filtrar</button>
+        </div>
+        <div id="relatorios-list" style="margin-top:1rem"></div>
+      </section>
+    </main>
+  </div>
+
+  <script type="module" src="./app.js"></script>
+</body>
+</html>
