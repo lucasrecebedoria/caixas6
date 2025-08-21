@@ -1,48 +1,25 @@
 rules_version = '2';
-
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // ==========================
-    // Usuários cadastrados
-    // ==========================
-    match /usuarios/{uid} {
-      // Só logados podem criar usuário
+    // Usuários: somente o próprio usuário pode ler/escrever seu doc
+    match /usuarios/{userId} {
       allow create: if request.auth != null;
-
-      // Cada usuário só pode ver/editar seu próprio perfil
-      allow read, update, delete: if request.auth != null && request.auth.uid == uid;
+      allow read, update, delete: if request.auth != null && request.auth.uid == userId;
     }
 
-    // ==========================
-    // Caixa (abertura/fechamento)
-    // ==========================
-    match /caixa/{caixaId} {
-      // Criar caixa -> qualquer logado
+    // Caixa: todos usuários autenticados podem criar (para abrir caixa), mas só admins podem ler todos
+    match /caixa/{docId} {
       allow create: if request.auth != null;
-
-      // Ler caixas
       allow read: if request.auth != null;
-
-      // Atualizar ou excluir -> só admins (matrículas fixas)
-      allow update, delete: if request.auth != null 
-        && (request.auth.token.email.split("@")[0] in ["4144", "70029", "6266"]);
+      allow update, delete: if request.auth != null && request.auth.token.admin == true;
     }
 
-    // ==========================
-    // Relatórios de abastecimento
-    // ==========================
-    match /relatorios/{relatorioId} {
-      // Criar relatório -> qualquer logado
+    // Relatórios: todos autenticados podem escrever, mas leitura restrita
+    match /relatorios/{docId} {
       allow create: if request.auth != null;
-
-      // Admins podem ler todos
-      allow read: if request.auth != null &&
-                  (request.auth.token.email.split("@")[0] in ["4144", "70029", "6266"]);
-
-      // Usuário só pode ver os relatórios que ele mesmo criou
-      allow read: if request.auth != null &&
-                  request.auth.token.email.split("@")[0] == resource.data.matriculaRecebedor;
+      allow read: if request.auth != null;
+      allow update, delete: if request.auth != null && request.auth.token.admin == true;
     }
   }
 }

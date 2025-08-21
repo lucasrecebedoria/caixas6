@@ -1,13 +1,14 @@
-
 import { getAuth, signOut, updatePassword } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
 
 const auth = getAuth();
 
-// Mostrar badge com nome + matrícula
+// Badge do usuário
 auth.onAuthStateChanged(user => {
   if (user) {
     const matricula = user.email.split("@")[0];
     const badge = document.getElementById("userBadge");
+    if (!badge) return;
+
     if (["4144","70029","6266"].includes(matricula)) {
       badge.innerText = `Admin ${matricula}`;
       badge.style.background = "linear-gradient(90deg, gold, goldenrod)";
@@ -17,11 +18,16 @@ auth.onAuthStateChanged(user => {
       badge.style.background = "linear-gradient(90deg, green, darkgreen)";
       badge.style.color = "#fff";
     }
+  } else {
+    // Se não logado, redireciona para login
+    if (!window.location.href.includes("login.html")) {
+      window.location.href = "login.html";
+    }
   }
 });
 
 // Logout
-document.getElementById("logoutBtn").addEventListener("click", () => {
+document.getElementById("logoutBtn")?.addEventListener("click", () => {
   signOut(auth).then(() => {
     localStorage.clear();
     sessionStorage.clear();
@@ -32,7 +38,7 @@ document.getElementById("logoutBtn").addEventListener("click", () => {
 });
 
 // Alterar senha
-document.getElementById("changePasswordBtn").addEventListener("click", () => {
+document.getElementById("changePasswordBtn")?.addEventListener("click", () => {
   const newPass = prompt("Digite a nova senha:");
   if (!newPass) return;
   const user = auth.currentUser;
