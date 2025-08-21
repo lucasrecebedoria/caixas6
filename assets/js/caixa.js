@@ -1,0 +1,1 @@
+// lógica de abertura/fechamento de caixa e abastecimentos
